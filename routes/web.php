@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('/','HomeController@index')->name('admin.dashboard');
+Route::get('/', 'HomeController@index')->name('admin.dashboard');
 
 Auth::routes();
 
@@ -32,5 +32,5 @@ Route::get('procurement/accept/{id}', 'Buyer\ProcurementrequestController@accept
 Route::resource('procurement', 'Buyer\ProcurementrequestController');
 
 
-Route::post('bid', 'Supplier\SupplierController@bid')->name('supplier.bid');
+Route::post('bid/{id}', 'Supplier\SupplierController@bid')->name('supplier.bid');
 Route::resource('supplier', 'Supplier\SupplierController');

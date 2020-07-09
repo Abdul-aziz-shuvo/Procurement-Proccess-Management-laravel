@@ -41,17 +41,68 @@
                       <td>{{$request->details}}</td>
                       <td>{{$request->total}}</td>
                       <td>
-                        {{-- {{dd($approved)}} --}}
-                        @if ($approved ?? '')
-                          @foreach ($approved as $approve)
-                          @if ($approve->product_id == $request->Product->id)
-                              
-                          <a href="{{route('supplier.show',$request->id)}}" class="btn btn-success float-left mr-2 disabled">Approved</a>
-                          @else
-                          <a href="{{route('supplier.show',$request->id)}}" class="btn btn-success float-left mr-2 ">Bid</a>
+                        {{-- {{dd($request->pivot->bided)}} --}}
+{{-- 
+                        @if ($request->pivot->bided == 1)
+                           
+                        <a href="{{route('supplier.show',$request->id)}}" class="btn btn-success disabled float-left mr-2 ">Bided</a>
+
+                        @else 
+                        <a href="{{route('supplier.show',$request->id)}}" class="btn btn-success float-left mr-2 ">Bid</a>
+                        @endif --}}
+                         
+
+                        {{-- {{ dd($request->pivot) }} --}}
+                         
+
+                          @if ($request->pivot->bided == 1 && $request->pivot->is_approved == 0)
+
+                            <a href="{{route('supplier.show',$request->id)}}" class="btn btn-success disabled float-left mr-2 ">Bided</a>
+                          @elseif($request->pivot->is_approved == 1 && $request->pivot->bided == 1)
+                             
+                              <a href="{{route('supplier.show',$request->id)}}" class="btn btn-success float-left mr-2 disabled">Approved</a>
+                           @else
+                           <a href="{{route('supplier.show',$request->id)}}" class="btn btn-success float-left mr-2 ">Bid</a>
                           @endif
-                          @endforeach
-                        @endif
+                            
+                            
+
+                          
+{{--                              
+                          @if ($request->pivot->bided == 1)
+                              
+                                 
+                               @if (count($approved) != 0)
+                                  @foreach ($approved as $approve)
+                                    @if (($approve->bid_approval == 1))
+                                        <a href="{{route('supplier.show',$request->id)}}" class="btn btn-success float-left mr-2 disabled">Approved</a>
+
+                                        @else  
+
+                                        <a href="{{route('supplier.show',$request->id)}}" class="btn btn-success disabled float-left mr-2 ">Bided</a>
+                                    @endif
+
+                                  @endforeach
+                              
+                               
+
+                              
+                              
+                               @endif  
+                               
+                            
+                          @endif
+
+                         @if ($request->pivot->bided == 0)
+                         <a href="{{route('supplier.show',$request->id)}}" class="btn btn-success float-left mr-2 ">Bid</a>
+                         @endif
+                       --}}
+                        
+ 
+                   
+                     
+                           
+
                        
                     </td>
                   </tr>
@@ -67,9 +118,13 @@
           </div>
         </div>
 
+
+       
         @if ($bid != null)
+ 
+
         <div class="col-8">
-          <form role="form" action="{{route('supplier.bid')}}" method="POST" id="form">
+          <form role="form" action="{{route('supplier.bid', $procurement_id)}}" method="POST" id="form">
             @csrf
           <div class="card-body">
             <div class="form-group">

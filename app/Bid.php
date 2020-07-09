@@ -7,12 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Bid extends Model
 {
     protected $guarded = [];
-   
-    public function User(){
+
+    public function User()
+    {
         return $this->belongsTo('App\User');
     }
 
-    public function Product(){
+    public function Product()
+    {
         return $this->belongsTo('App\Buyer\Product');
+    }
+    public function Procurement()
+    {
+        return $this->belongsTo('App\Buyer\Procurement');
     }
 }

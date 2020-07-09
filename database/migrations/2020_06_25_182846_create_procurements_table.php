@@ -17,14 +17,14 @@ class CreateProcurementsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-           
             $table->string('date');
             $table->string('qty');
             $table->string('unitPrice');
             $table->string('details');
             $table->string('total');
             $table->string('req_send')->default(false);
-            
+
+
             $table->timestamps();
         });
     }

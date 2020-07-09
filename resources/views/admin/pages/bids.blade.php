@@ -38,7 +38,7 @@
                               <td>{{$bid->total}}</td>
                               <td>
 
-                              <a href="{{route('procurement.accept',$bid->id)}}" class="btn btn-primary {{$bid->bid_approval == true ? 'disabled' : ''}}" >Approve</a>
+                              <a href="{{route('procurement.accept', $bid->id)}}" class="btn btn-primary {{ $bid->approved == 1 ? 'disabled' : '' }}" >Approve</a>
                                 {{-- <a 
                                 href="{{route('send.req',$bid->id)}}" 
                                 class="btn btn-outline-dark" 

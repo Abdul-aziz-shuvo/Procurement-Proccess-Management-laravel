@@ -18,9 +18,9 @@ class ProcurementrequestController extends Controller
      */
     public function index()
     {
-        $data['suppliers'] = User::where('role','supplier')->get();
+        $data['suppliers'] = User::where('role', 'supplier')->get();
         $data['products'] = Product::all();
-       return $data;
+        return $data;
     }
 
     public function view()
@@ -46,26 +46,25 @@ class ProcurementrequestController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'suppliers'=>'required',
-            'date'=>'required',
-            'details'=>'required',
-            'product'=>'required',
-            'qty'=>'required',
-            'total'=>'required',
-            'unitPrice'=>'required',
-            
+            'suppliers' => 'required',
+            'date' => 'required',
+            'details' => 'required',
+            'product' => 'required',
+            'qty' => 'required',
+            'total' => 'required',
+            'unitPrice' => 'required',
+
         ]);
 
-      $pr =   Procurement::create([
-            'date'=> $request->date,
-            'details'=>$request->details,
-            'product_id'=>$request->product,
-            'qty'=>$request->qty,
-            'total'=>$request->total,
-            'unitPrice'=>$request->unitPrice,
+        $pr =   Procurement::create([
+            'date' => $request->date,
+            'details' => $request->details,
+            'product_id' => $request->product,
+            'qty' => $request->qty,
+            'total' => $request->total,
+            'unitPrice' => $request->unitPrice,
         ]);
-     $pr->Suppliers()->attach($request->suppliers,['product_id'=> $request->product]);
-        
+        $pr->Suppliers()->attach($request->suppliers, ['product_id' => $request->product]);
     }
 
     /**
@@ -99,7 +98,6 @@ class ProcurementrequestController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
     }
 
     /**
@@ -110,37 +108,47 @@ class ProcurementrequestController extends Controller
      */
     public function destroy($id)
     {
-        
     }
-    public function procurements(){
+    public function procurements()
+    {
         $data['procurements'] = Procurement::all();
-        return view('admin.pages.showProcurement',$data);
-        
-       
-      
+        return view('admin.pages.showProcurement', $data);
     }
-    public function sendReq($id){
+    public function sendReq($id)
+    {
         // dd($id);
-       $procurement = Procurement::find($id);
-       $procurement->req_send = true;
-       $procurement->save();
-       return redirect()->back();
-      
+        $procurement = Procurement::find($id);
+        $procurement->req_send = true;
+        $procurement->save();
+        return redirect()->back();
     }
-    public function getBid(){
+    public function getBid()
+    {
         // dd($id);
-       $data['bids'] = Bid::all();
+        $data['bids'] = Bid::all();
 
-       return view('admin.pages.bids',$data);
-      
+        return view('admin.pages.bids', $data);
     }
-    public function accept($id){
-      
-       $data = Bid::find($id);
-       $data->bid_approval = true;
-       $data->save();
+    public function accept($bid)
+    {
+        // dd($bid);
+        $data = Bid::find($bid);
+        $data->approved = 1;
+        $data->save();
+        $p = $data->Procurement->id;
 
-       return redirect()->route('procurements.bid');
-      
+        foreach ($data->User->Procurements as $procurement) {
+            if ($procurement->id == $p) {
+                $data->User->Procurements()->updateExistingPivot(
+                    $p,
+                    ['is_approved' => 1]
+                );
+            }
+        }
+        // $data = Auth::user()
+        // $data->bid_approval = true;
+        // $data->save();
+
+        return redirect()->route('procurements.bid');
     }
 }

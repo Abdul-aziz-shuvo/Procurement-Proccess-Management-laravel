@@ -19,12 +19,13 @@ class CreateBidsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->unsignedBigInteger('procurement_id');
+            $table->foreign('procurement_id')->references('id')->on('procurements')->onDelete('cascade');
             $table->integer('qty');
             $table->integer('unit_price');
             $table->integer('total');
             $table->text('details')->nullable();
-            $table->boolean('bided')->default(false);
-            $table->boolean('bid_approval')->default(false);
+            $table->boolean('approved')->default(0);
             $table->timestamps();
         });
     }

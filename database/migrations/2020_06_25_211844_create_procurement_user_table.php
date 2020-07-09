@@ -20,8 +20,10 @@ class CreateProcurementUserTable extends Migration
             $table->unsignedBigInteger('procurement_id');
             $table->foreign('procurement_id')->references('id')->on('procurements')->onDelete('cascade');
             $table->integer('product_id');
+            $table->boolean('bided')->default(false);
+            $table->boolean('is_approved')->default(false);
             $table->timestamps();
-        }); 
+        });
     }
 
     /**

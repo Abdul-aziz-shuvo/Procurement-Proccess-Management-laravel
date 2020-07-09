@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Supplier;
 
 use App\Bid;
+use App\User;
 use App\Buyer\Product;
 use App\Buyer\Procurement;
 use Illuminate\Http\Request;
@@ -19,46 +20,62 @@ class SupplierController extends Controller
     public function index()
     {
         // $procurements = Procurement::where('req_send',1)->get();
-        $data['procurements'] = Auth::user()->Procurements->where('req_send',1);
+        $data['procurements'] = Auth::user()->Procurements;
         $data['bid'] = null;
-        $data['approved'] = Auth::user()->Bids->where('bid_approval',1);
+        $data['approved'] = Auth::user()->Bids;
 
-        
-       
-        // foreach($data['procurements'] as $proc)
-        // {
-        //     dd($proc->Product);
+
+
+        // $bided = Auth::user()->Procurements;
+        // $bided = User::with(['Procurements' => function ($q) {
+        //     $q->where('user_id', Auth::user()->id)->select('bided')->where('bided', 1);
+        // }])->first();
+
+        // $bided = Auth::user()->procurements();
+        // dd($bided);
+        // $bided = Procurement::all()->Suppliers->where('user_id', Auth::user()->id)->get();
+
+
+        // foreach ($bided->Procurements as $key => $value) {
+        //     # code...
         // }
-        
-        
 
-       
-        return view('supplier.pages.buyerRequest',$data);
+        return view('supplier.pages.buyerRequest', $data);
     }
 
-    public function bid(Request $request)
+    public function bid(Request $request, $id)
     {
-        
-        
+
+
+
         $request->validate([
             'product_id' => 'required',
             'qty' =>  'required',
             'unit_price' =>  'required',
             'total' =>  'required',
-            
+
 
         ]);
 
         Bid::create([
             'user_id' => $request->supplier_id,
             'product_id' => $request->product_id,
+            'procurement_id' => $id,
             'qty' => $request->qty,
             'unit_price' => $request->unit_price,
             'total' => $request->total,
             'details' => $request->details,
+
+
         ]);
+        // Auth::user()->Procurements()->sync('bided', 1);
+        // Auth::user()->Procurements()->where('product_id', $request->product_id)->update(['bided' => 1]);
+        // Auth::user()->Procurements()->sync(['bided' => 1]);
+        Auth::user()->procurements()->updateExistingPivot(
+            $id,
+            ['bided' => 1]
+        );
         return redirect()->route('supplier.index');
-      
     }
 
     /**
@@ -90,10 +107,11 @@ class SupplierController extends Controller
      */
     public function show($id)
     {
-        $data['procurements'] = Auth::user()->Procurements->where('req_send',1);
+        $data['procurements'] = Auth::user()->Procurements->where('req_send', 1);
         $data['bid'] = Procurement::find($id);
-        $data['approved'] = Auth::user()->Bids->where('bid_approval',1);
-        return view('supplier.pages.buyerRequest',$data);
+        $data['approved'] = Auth::user()->Bids->where('bid_approval', 1);
+        $data['procurement_id'] = $id;
+        return view('supplier.pages.buyerRequest', $data);
     }
 
     /**
@@ -129,5 +147,4 @@ class SupplierController extends Controller
     {
         //
     }
-
 }
